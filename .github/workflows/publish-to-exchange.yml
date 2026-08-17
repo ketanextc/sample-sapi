@@ -35,7 +35,6 @@ jobs:
 
       - name: Publish to Anypoint Exchange
         env:
-          # Injects your secure GitHub Secrets into the environment
           ANYPOINT_CLIENT_ID: ${{ secrets.ANYPOINT_CLIENT_ID }}
           ANYPOINT_CLIENT_SECRET: ${{ secrets.ANYPOINT_CLIENT_SECRET }}
           ANYPOINT_ORG_ID: ${{ secrets.ANYPOINT_ORG_ID }}
@@ -43,6 +42,7 @@ jobs:
           anypoint-cli-v4 exchange:asset:upload \
             --type "rest-api" \
             --name "${{ env.NAME }}" \
-            --assetId "${{ env.ASSET_ID }}" \
-            --version "${{ env.VERSION }}" \
+            --properties='{"mainFile": "api.raml"}' \
+            ${{ env.ASSET_ID }}/${{ env.VERSION }} \
             api-spec.zip
+            
