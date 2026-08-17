@@ -76,7 +76,17 @@ types:
     put:
       description: Update order
       body:
-        application/
+        application/json:
+          type: object
+          properties:
+            orderId:
+              type: number
+            dateCreated:
+              type: string
+            status:
+              type: string
+              enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+        
     patch:
       description: Update an order's status
       body:
