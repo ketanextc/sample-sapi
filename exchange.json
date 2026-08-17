@@ -1,5 +1,5 @@
 {
-  "main": "sample-sapi.raml",
+  "main": "api.raml",
   "name": "sample-sapi",
   "groupId": "b45102f7-b6da-4a7a-819b-f6f57efa5d84",
   "assetId": "sample-sapi",
