@@ -1,0 +1,48 @@
+name: Publish API to Exchange
+
+on:
+  push:
+    branches:
+      - main # Triggers automatically when a PR is merged into main
+
+jobs:
+  publish-to-exchange:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (Required for Anypoint CLI)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Anypoint CLI v4
+        run: npm install -g anypoint-cli-v4
+
+      - name: Extract metadata from exchange.json
+        id: extract
+        # Uses 'jq' to dynamically read the asset details from your Design Center file
+        run: |
+          echo "ASSET_ID=$(jq -r '.assetId' exchange.json)" >> $GITHUB_ENV
+          echo "VERSION=$(jq -r '.version' exchange.json)" >> $GITHUB_ENV
+          echo "NAME=$(jq -r '.name' exchange.json)" >> $GITHUB_ENV
+
+      - name: Package API Specification
+        # Zips all files except Git hidden folders
+        run: zip -r api-spec.zip . -x ".git/*" ".github/*"
+
+      - name: Publish to Anypoint Exchange
+        env:
+          # Injects your secure GitHub Secrets into the environment
+          ANYPOINT_CLIENT_ID: ${{ secrets.ANYPOINT_CLIENT_ID }}
+          ANYPOINT_CLIENT_SECRET: ${{ secrets.ANYPOINT_CLIENT_SECRET }}
+          ANYPOINT_ORG_ID: ${{ secrets.ANYPOINT_ORG_ID }}
+        run: |
+          anypoint-cli-v4 exchange:asset:upload \
+            --type "rest-api" \
+            --name "${{ env.NAME }}" \
+            --assetId "${{ env.ASSET_ID }}" \
+            --version "${{ env.VERSION }}" \
+            api-spec.zip
