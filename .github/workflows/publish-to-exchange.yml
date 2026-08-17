@@ -23,15 +23,17 @@ jobs:
 
       - name: Extract metadata from exchange.json
         id: extract
-        # Uses 'jq' to dynamically read the asset details from your Design Center file
         run: |
           echo "ASSET_ID=$(jq -r '.assetId' exchange.json)" >> $GITHUB_ENV
           echo "VERSION=$(jq -r '.version' exchange.json)" >> $GITHUB_ENV
           echo "NAME=$(jq -r '.name' exchange.json)" >> $GITHUB_ENV
+          # Dynamically grab the exact type (raml/oas) and root file (api.raml)
+          echo "TYPE=$(jq -r '.classifier' exchange.json)" >> $GITHUB_ENV
+          echo "MAIN_FILE=$(jq -r '.main' exchange.json)" >> $GITHUB_ENV
 
       - name: Package API Specification
-        # Zips all files except Git hidden folders
-        run: zip -r api-spec.zip . -x ".git/*" ".github/*"
+        # We explicitly exclude exchange.json from the zip so it doesn't collide with the CLI flags
+        run: zip -r api-spec.zip . -x ".git/*" ".github/*" "exchange.json"
 
       - name: Publish to Anypoint Exchange
         env:
@@ -40,8 +42,8 @@ jobs:
           ANYPOINT_ORG_ID: ${{ secrets.ANYPOINT_ORG_ID }}
         run: |
           anypoint-cli-v4 exchange:asset:upload \
-            --type "rest-api" \
+            --type "${{ env.TYPE }}" \
             --name "${{ env.NAME }}" \
-            --properties='{"mainFile": "api.raml"}' \
+            --properties='{"mainFile": "${{ env.MAIN_FILE }}"}' \
             ${{ env.ASSET_ID }}/${{ env.VERSION }} \
             api-spec.zip
