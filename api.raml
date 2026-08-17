@@ -86,7 +86,15 @@ types:
             status:
               type: string
               enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
-        
+      responses:
+        200:
+          body:
+            application/json:
+              type: Order
+        404:
+          body:
+            application/json:
+              type: Error
     patch:
       description: Update an order's status
       body:
