@@ -3,7 +3,7 @@
   "name": "sample-sapi",
   "groupId": "b45102f7-b6da-4a7a-819b-f6f57efa5d84",
   "assetId": "sample-sapi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "classifier": "raml",
   "tags": [],
   "descriptorVersion": "1.0.0",
