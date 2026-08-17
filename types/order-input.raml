@@ -1,0 +1,12 @@
+type: object
+properties:
+  customerId:
+    type: string
+  items:
+    type: array
+    items:
+      type: object
+      properties:
+        sku: string
+        quantity: integer
+required: [customerId, items]

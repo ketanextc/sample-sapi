@@ -1,0 +1,101 @@
+#%RAML 1.0
+title: Orders API
+version: v1
+baseUri: https://api.example.com/{version}
+mediaType: application/json
+
+traits:
+  paginated: !include traits/paginated.raml
+  secured: !include traits/secured.raml
+
+securitySchemes:
+  oauth_2_0: !include securitySchemes/oauth_2_0.raml
+
+types:
+  Order: !include types/order.raml
+  OrderInput: !include types/order-input.raml
+  Error: !include types/error.raml
+
+/orders:
+  displayName: Orders
+  is: [secured]
+  get:
+    description: Retrieve a list of orders
+    is: [paginated]
+    queryParameters:
+      status:
+        type: string
+        enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            type: Order[]
+            example: !include examples/order-example.raml
+      401:
+        body:
+          application/json:
+            type: Error
+  post:
+    description: Create a new order
+    body:
+      application/json:
+        type: OrderInput
+        example:
+          customerId: "CUST-42"
+          items:
+            - sku: "SKU-1"
+              quantity: 2
+    responses:
+      201:
+        body:
+          application/json:
+            type: Order
+      400:
+        body:
+          application/json:
+            type: Error
+
+  /{orderId}:
+    uriParameters:
+      orderId:
+        type: string
+        example: "ORD-1001"
+    get:
+      description: Retrieve a single order by ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: Order
+        404:
+          body:
+            application/json:
+              type: Error
+    patch:
+      description: Update an order's status
+      body:
+        application/json:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+      responses:
+        200:
+          body:
+            application/json:
+              type: Order
+        404:
+          body:
+            application/json:
+              type: Error
+    delete:
+      description: Cancel an order
+      responses:
+        204:
+        404:
+          body:
+            application/json:
+              type: Error

@@ -1,0 +1,19 @@
+type: object
+properties:
+  id:
+    type: string
+    example: "ORD-1001"
+  customerId:
+    type: string
+    example: "CUST-42"
+  status:
+    type: string
+    enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+  total:
+    type: number
+    format: float
+    example: 249.99
+  createdAt:
+    type: datetime
+    example: 2026-08-17T10:00:00Z
+required: [id, customerId, status, total]
