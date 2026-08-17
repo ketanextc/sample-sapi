@@ -1,5 +1,7 @@
-id: "ORD-1001"
-customerId: "CUST-42"
-status: PENDING
-total: 249.99
-createdAt: 2026-08-17T10:00:00Z
+{
+  "id": "ORD-1001"
+  "customerId": "CUST-42"
+  "status": PENDING
+  "total": 249.99
+  "createdAt": "2026-08-17T10:00:00Z"
+    \
