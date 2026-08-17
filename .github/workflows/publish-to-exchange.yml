@@ -45,4 +45,3 @@ jobs:
             --properties='{"mainFile": "api.raml"}' \
             ${{ env.ASSET_ID }}/${{ env.VERSION }} \
             api-spec.zip
-            
