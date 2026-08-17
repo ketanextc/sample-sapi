@@ -32,8 +32,10 @@ jobs:
           echo "MAIN_FILE=$(jq -r '.main' exchange.json)" >> $GITHUB_ENV
 
       - name: Package API Specification
-        # We explicitly exclude exchange.json from the zip so it doesn't collide with the CLI flags
-        run: zip -r api-spec.zip . -x ".git/*" ".github/*" "exchange.json"
+        # Use a subshell to ensure we zip from the correct root directory
+        run: |
+          cd $GITHUB_WORKSPACE
+          zip -r api-spec.zip . -x ".git/*" ".github/*" "exchange.json" "api-spec.zip"
 
       - name: Publish to Anypoint Exchange
         env:
